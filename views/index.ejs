@@ -1,0 +1,61 @@
+<html>
+<head>
+	<title>Survey Form</title>
+	<link rel="stylesheet" href="/css/style.css">
+	<script src="/js/jquery.js"></script>
+	<script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type ="text/javascript">
+		$(document).ready(function (){
+			// this triggers the connection event in our server!
+			var socket = io.connect();
+			// write all the socket stuff here
+			$('form').submit(function(){
+					socket.emit("posting_form", {
+						name: $('#name').val(),
+						location: $('#location').val(),
+						language: $('#language').val(),
+						comment: $('#comment').val()
+					});
+					$('#name').val("")//to reset the input field
+					return false;	
+				});
+				socket.on('updated_message', function(data){
+					$('.box').append('<p> Name: '+ data.name +'</p>');
+					$('.box').append('<p> Location: '+ data.location +'</p>');
+					$('.box').append('<p> Languge: '+ data.language +'</p>');
+					$('.box').append('<p> Comment: '+ data.comment +'</p>');
+				});
+				socket.on('random_number', function(data){
+					$('.box').append('<p> Your lucky number: '+ data.num +'</p>');
+				});
+		});
+	</script>
+</head>
+<body>
+	<div class="box"></div>
+	<h1>Survey Form</h1>
+	<form method="post" action="/">
+	<label>Your Name:</label>
+	<input id="name" type="text" name="name">
+
+	<label>Dojo Location:</label>
+	<select id="location" name="location">
+		<option name="mountainView">Mountain View</option>
+		<option name="seattle">Seattle</option>
+	</select>
+
+	<label>Favorite Language:</label>
+	<select id="language" name="language">
+		<option name="node">Node</option>
+		<option name="js">Javascipt</option>
+		<option name="css">CSS</option>
+		<option name="html">HTML</option>
+	</select>
+
+	<label>Comment (optional):</label>
+	<textarea id="comment" name="comment" row="5" col="5"></textarea>
+
+	<input type="submit" value="Submit">
+
+</body>
+</html>

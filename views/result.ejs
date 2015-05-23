@@ -1,0 +1,58 @@
+<html>
+<head>
+	<title>Survey Form</title>
+	<link rel="stylesheet" href="/css/style.css">
+	<script src="/js/jquery.js"></script>
+	<script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type ="text/javascript">
+		$(document).ready(function (){
+			// this triggers the connection event in our server!
+			var socket = io.connect('http://localhost:8080');
+			socket.on('messages', function(data){
+				alert(data.hello);
+			});
+			$('#chat_form').submit(function(e){
+					var message = $('#chat_input').val();
+					socket.emit('messages', message);
+					// console.log(message);
+					// $('lucky').append("<p>"+message+"</p>");
+				});
+				socket.on('server_response', function (data){
+					console.log('The server says: ' + data.response);
+			});
+			// we'll write all the socket stuff after the above line!
+			var num = Math.ceil(Math.random()*1000);
+			console.log(num);
+			socket.emit(num);
+			$('.lucky').append("<p>Your lucky number here: "+num+"</p>");
+			$('button').click(function (){
+					var num = Math.ceil(Math.random()*1000);
+					console.log(num);
+					socket.emit("button_clicked", {reason: "because I want to learn about sockets! Here is the random number: "+num});
+					$('.lucky').append("<p>random number here: "+num+"</p>");
+				});
+				socket.on('server_response', function (data){
+					console.log('The server says: ' + data.response);
+			});
+		});
+	</script>
+</head>
+<body>
+<!-- 	<form>
+		<input id="chat_form" type="text">
+<input type="submit" value="something">
+	</form> -->
+	<div class="lucky"></div>
+	<h1>Submitted Information</h1>
+
+    <% for (var x in users) { %>
+        <h3>Name: <%= users[x].name %></h3>
+        <h4>Location: <%= users[x].location %></h4>
+        <h4>Language: <%= users[x].language %></h4>
+        <h4>Comment: <%= users[x].comment %></h4>
+        <hr>
+    <% } %>
+
+	<a href="/"><button>back</button></a>
+</body>
+</html>
